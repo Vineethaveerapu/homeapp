@@ -1,11 +1,27 @@
-import { HomePostType } from "@/utils/supabase/queries";
+"use client";
+import { getHomePosts, HomePostType } from "@/utils/supabase/queries";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 
 const HomePosts = ({ posts }: { posts: HomePostType }) => {
+  const { data } = useQuery({
+    queryKey: ["home-posts"],
+    queryFn: async () => {
+      const { data, error } = await getHomePosts();
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+    initialData: posts,
+    refetchOnMount: false,
+    staleTime: 10000
+  });
+
   return (
     <div>
-      {posts &&
-        posts.map(({ id, title, slug, users }) => (
+      {data &&
+        data.map(({ id, title, slug, users }) => (
           <Link
             href={`/posts/${slug}`}
             className="block border-1 rounded-xl p-4 mt-4 "
