@@ -1,8 +1,9 @@
 import { createClient } from "./browser-client";
 import { type QueryData } from "@supabase/supabase-js";
 
-export const getHomePosts = async () => {
-  const supabase = createClient();
+export const getHomePosts = async (
+  supabase: ReturnType<typeof createClient>
+) => {
   return await supabase
     .from("posts")
     .select('id, title, slug, users("username")')
@@ -11,7 +12,19 @@ export const getHomePosts = async () => {
 
 export const getSinglePost = async (slug: string) => {
   const supabase = createClient();
-  return await supabase.from("posts").select("*").eq("slug", slug).single();
+  return await supabase
+    .from("posts")
+    .select("id, title, slug, users(username), content")
+    .eq("slug", slug)
+    .single();
+};
+
+export const getSearchPosts = async (searchTerm: string) => {
+  const supabase = createClient();
+  return await supabase
+    .from("posts")
+    .select(" title, slug")
+    .ilike("title", `%${searchTerm}%`);
 };
 
 export type HomePostType = QueryData<ReturnType<typeof getHomePosts>>;
