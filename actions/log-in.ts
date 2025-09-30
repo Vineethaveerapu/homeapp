@@ -1,18 +1,18 @@
-import { createClient } from "@supabase/supabase-js";
+"use server";
 
-export const logIn = async (email: string, password: string) => {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
-  );
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
+import { createClient } from "@/utils/supabase/server-client";
+import { redirect } from "next/navigation";
 
-  if (error) {
-    throw error;
-  }
+export const logIn = async (formdata: FormData) => {
+  const userdata = {
+    email: formdata.get("email") as string,
+    password: formdata.get("password") as string
+  };
 
-  return data;
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error
+  } = await supabase.auth.signInWithPassword(userdata);
+  redirect("/");
 };

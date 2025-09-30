@@ -10,6 +10,8 @@ const SignUpForm = () => {
             className="border-2 border-gray-700 rounded-2xl p-2"
             id="email"
             name="email"
+            type="email"
+            required
             placeholder="Email"
           />
         </fieldset>
@@ -17,7 +19,8 @@ const SignUpForm = () => {
           <label htmlFor="username"> Enter your Username</label>
           <input
             id="username"
-            type="username"
+            type="text"
+            required
             name="username"
             placeholder=" Enter your Username"
             className="border-2 border-gray-700 rounded-2xl p-2"
@@ -27,8 +30,8 @@ const SignUpForm = () => {
           <label htmlFor="password"> Enter your Password</label>
           <input
             id="password"
-            type="password"
             name="password"
+            required
             placeholder=" Enter your Password"
             className="border-2 border-gray-700 rounded-2xl p-2"
           />

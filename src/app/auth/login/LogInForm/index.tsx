@@ -1,7 +1,8 @@
+import { logIn } from "../../../../../actions/log-in";
 const LogInForm = () => {
   return (
     <>
-      <form className="flex flex-col gap-4 mb-4">
+      <form action={logIn} className="flex flex-col gap-4 mb-4">
         <fieldset className="flex flex-col gap-4">
           <label htmlFor="email"> Enter your Email</label>
           <input
@@ -15,7 +16,6 @@ const LogInForm = () => {
           <label htmlFor="password"> Enter your Password</label>
           <input
             id="password"
-            type="password"
             name="password"
             placeholder=" Enter your Password"
             className="border-2 border-gray-700 rounded-2xl p-2"

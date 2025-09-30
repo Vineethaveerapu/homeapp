@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server-client";
+import { redirect } from "next/navigation";
 
 export const SignUp = async (formdata: FormData) => {
   const userdata = {
@@ -15,9 +16,8 @@ export const SignUp = async (formdata: FormData) => {
     error
   } = await supabase.auth.signUp(userdata);
 
-  if (error) {
-    throw error;
-  }
+  console.log("SignUp error:", error);
+  console.log("SignUp data:", user);
 
   if (user && user.email) {
     const { error: insertError } = await supabase
@@ -26,10 +26,8 @@ export const SignUp = async (formdata: FormData) => {
         { id: user.id, email: user.email, username: userdata.username }
       ]);
 
-    if (insertError) {
-      throw insertError;
-    }
+    console.log("Insert error:", insertError);
   }
 
-  return;
+  redirect("/");
 };

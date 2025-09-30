@@ -24,8 +24,9 @@ export const middleware = async (request: NextRequest) => {
       }
     }
   );
+
   const {
-    data: { user }
+    data: { user },
+    error
   } = await supabase.auth.getUser();
-  console.log("user", user);
 };
