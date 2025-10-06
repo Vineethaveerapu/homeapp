@@ -8,7 +8,7 @@ const LogOutButton = () => {
   };
 
   return (
-    <button className="button-secondary" onClick={handleClick}>
+    <button className="button-secondary " onClick={handleClick}>
       LogOut
     </button>
   );

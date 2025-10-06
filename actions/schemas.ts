@@ -1,6 +1,12 @@
 import { z } from "zod";
 
 export const logInSchema = z.object({
-  email: z.email(),
+  email: z.email("wrong email format"),
+  password: z.string().min(6, " Your Password must be at least 6 characters")
+});
+
+export const signUpSchema = z.object({
+  email: z.email("wrong email format"),
+  username: z.string().min(5, "Usernames must be at least 5 characters long"),
   password: z.string().min(6, " Your Password must be at least 6 characters")
 });

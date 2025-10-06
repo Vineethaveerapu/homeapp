@@ -2,31 +2,27 @@
 
 import { createClient } from "@/utils/supabase/server-client";
 import { redirect } from "next/navigation";
+import { signUpSchema } from "./schemas";
+import z from "zod";
 
-export const SignUp = async (formdata: FormData) => {
-  const userdata = {
-    email: formdata.get("email") as string,
-    username: formdata.get("username") as string,
-    password: formdata.get("password") as string
-  };
-
+export const SignUp = async (userdata: z.infer<typeof signUpSchema>) => {
   const supabase = await createClient();
   const {
     data: { user },
     error
   } = await supabase.auth.signUp(userdata);
 
-  console.log("SignUp error:", error);
-  console.log("SignUp data:", user);
+  // console.log("SignUp error:", error);
+  // console.log("SignUp data:", user);
 
   if (user && user.email) {
-    const { error: insertError } = await supabase
+    const { data, error } = await supabase
       .from("users")
       .insert([
         { id: user.id, email: user.email, username: userdata.username }
       ]);
-
-    console.log("Insert error:", insertError);
+    if (error) throw error;
+    // console.log("Insert error:", insertError);
   }
 
   redirect("/");

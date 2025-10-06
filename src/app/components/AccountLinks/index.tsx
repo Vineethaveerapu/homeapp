@@ -16,10 +16,10 @@ const AccountLinks = async () => {
     <div>
       {user ? (
         <>
-          <LogOutButton />
-          <Link className="button-tertiary" href="/create">
+          <Link className="button-tertiary mr-6" href="/create">
             Create Post
           </Link>
+          <LogOutButton />
         </>
       ) : (
         <Link className="button-secondary" href="/auth/login">
