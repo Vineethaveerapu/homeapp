@@ -1,6 +1,7 @@
 import { getSinglePost } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server-client";
 import Link from "next/link";
+import DeleteButton from "./DeleteButton";
 
 const SinglePost = async ({ params }: { params: { slug: string } }) => {
   const { slug } = await params;
@@ -58,7 +59,7 @@ const SinglePost = async ({ params }: { params: { slug: string } }) => {
           </div>
           {isAuthor && (
             <div className="w-2xl p-4 m-auto border-gray-700 border-1 mt-4 rounded-2xl">
-              Delete me!
+              <DeleteButton postId={data.id} />
             </div>
           )}
         </>
