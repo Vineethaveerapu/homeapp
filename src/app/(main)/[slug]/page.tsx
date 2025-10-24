@@ -17,64 +17,88 @@ const SinglePost = async ({ params }: { params: { slug: string } }) => {
   if (error) {
     console.error("Error fetching post:", error);
     return (
-      <div className="w-[80%] m-auto">
-        <h2 className="text-2xl font-bold text-red-500">Error loading post</h2>
-        <p className="text-lg text-gray-500">
-          Post not found or error occurred
-        </p>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-2">
+            Error loading post
+          </h2>
+          <p className="text-gray-600">Post not found or error occurred</p>
+        </div>
       </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="w-[80%] m-auto">
-        <h2 className="text-2xl font-bold text-red-500">Post not found</h2>
-        <p className="text-lg text-gray-500">
-          The requested post could not be found
-        </p>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-2">
+            Post not found
+          </h2>
+          <p className="text-gray-600">The requested post could not be found</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <>
+    <div className="max-w-4xl mx-auto px-4 py-8">
       {data && (
         <>
-          <div className="mt-10">
-            <Link className="button-tertiary " href="/">
-              Back to Home
-            </Link>
-          </div>
-          <div className="w-2xl p-4 m-auto border-gray-700 border-1 mt-4 rounded-2xl">
-            <h2 className="text-2xl font-bold text-red-500">{data.title}</h2>
-            <p className="text-lg text-gray-500 mt-4">
-              Author: {data.users?.username}
-            </p>
-            {/* <p>author : {data.user_id}</p>
-            <p>logged in: {user?.id}</p> */}
-          </div>
-          {data.image && (
-            <div className="w-lg m-auto p-4 bg-gray-100 rounded-lg mt-4">
-              <img
-                src={data.image}
-                alt={data.title}
-                width="100%"
-                height="auto"
-              />
+          {/* Main Post Card */}
+          <article className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            {/* Header Section */}
+            <div className="p-8 border-b border-gray-300">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4 ">
+                {data.title}
+              </h1>
+              <div className="flex items-center gap-4 text-gray-600">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                    <span className="text-white font-semibold text-sm">
+                      {data.users?.username?.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <span className="font-medium">By {data.users?.username}</span>
+                </div>
+              </div>
             </div>
-          )}
-          <div className="m-auto p-4 bg-gray-100 rounded-lg mt-4">
-            {data.content && <div>{data.content}</div>}
-          </div>
-          {isAuthor && (
-            <div className="w-2xl p-4 m-auto border-gray-700 border-1 mt-4 rounded-2xl">
-              <DeleteButton postId={data.id} />
-            </div>
-          )}
+
+            {/* Image Section */}
+            {data.image && (
+              <div className="m-auto p-4">
+                <img
+                  src={data.image}
+                  alt={data.title}
+                  width="100%"
+                  height="auto"
+                />
+              </div>
+            )}
+
+            {/* Content Section */}
+            {data.content && (
+              <div className="p-8">
+                <div className="prose prose-lg max-w-none">
+                  <div className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+                    {data.content}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Author Actions */}
+            {isAuthor && (
+              <div className="p-8 border-t border-gray-300">
+                <div className="flex justify-center ">
+                  <DeleteButton postId={data.id} />
+                </div>
+              </div>
+            )}
+          </article>
         </>
       )}
-    </>
+    </div>
   );
 };
 
