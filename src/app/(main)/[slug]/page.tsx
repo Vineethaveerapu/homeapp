@@ -1,7 +1,6 @@
 import { getSinglePost } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server-client";
 import Link from "next/link";
-import Image from "next/image";
 import DeleteButton from "./DeleteButton";
 
 const SinglePost = async ({ params }: { params: { slug: string } }) => {
@@ -57,12 +56,11 @@ const SinglePost = async ({ params }: { params: { slug: string } }) => {
           </div>
           {data.image && (
             <div className="w-lg m-auto p-4 bg-gray-100 rounded-lg mt-4">
-              <Image
+              <img
                 src={data.image}
                 alt={data.title}
-                width={800}
-                height={600}
-                className="w-full h-auto rounded-lg"
+                width="100%"
+                height="auto"
               />
             </div>
           )}
