@@ -1,5 +1,5 @@
 "use client";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { getSearchPosts } from "@/utils/supabase/queries";
@@ -7,15 +7,26 @@ import { useQuery } from "@tanstack/react-query";
 
 const SearchInput = () => {
   const [userInput, setUserInput] = useState<string>("");
+  const [debouncedInput, setDebouncedInput] = useState<string>("");
+
+  // Debounce the input to prevent excessive API calls
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedInput(userInput);
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timer);
+  }, [userInput]);
 
   const { data } = useQuery({
-    queryKey: ["search-results", userInput],
+    queryKey: ["search-results", debouncedInput],
     queryFn: async () => {
-      const { data, error } = await getSearchPosts(userInput);
+      const { data, error } = await getSearchPosts(debouncedInput);
       if (error) throw new Error();
       return data;
     },
-    enabled: userInput && userInput.length > 0 ? true : false
+    enabled: debouncedInput.length > 2, // Only search with 3+ characters
+    staleTime: 2 * 60 * 1000 // 2 minutes cache for search results
   });
 
   const handleChange = (e: { target: { value: SetStateAction<string> } }) => {
@@ -34,12 +45,12 @@ const SearchInput = () => {
           onChange={handleChange}
         />
       </div>
-      {data && (
+      {data && Array.isArray(data) && data.length > 0 && (
         <div
           onClick={() => setUserInput("")}
           className="flex flex-col gap-2 mt-2 bg-gray-100 rounded-2xl p-2"
         >
-          {data.map(({ title, slug }) => (
+          {data.map(({ title, slug }: { title: string; slug: string }) => (
             <Link className="block" href={`${slug}`} key={slug}>
               {title}
             </Link>

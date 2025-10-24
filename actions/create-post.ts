@@ -30,6 +30,19 @@ export const createPost = async (userdata: z.infer<typeof postSchema>) => {
 
   const userId = user.id;
 
+  // Check if a post with this title already exists
+  const { data: existingPost } = await supabase
+    .from("posts")
+    .select("id")
+    .eq("title", parsedData.title)
+    .single();
+
+  if (existingPost) {
+    throw new Error(
+      "A post with this title already exists. Please choose a different title."
+    );
+  }
+
   await supabase
     .from("posts")
     .insert([

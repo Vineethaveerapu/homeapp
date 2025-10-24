@@ -2,12 +2,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { postSchema } from "../../../../actions/schemas";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPost } from "../../../../actions/create-post";
 import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
 
 const CreatePage = () => {
+  const queryClient = useQueryClient();
+
   const schemaWithImage = postSchema.omit({ image: true }).extend({
     image: z
       .unknown()
@@ -25,8 +27,15 @@ const CreatePage = () => {
     resolver: zodResolver(schemaWithImage)
   });
 
-  const { mutate } = useMutation({
-    mutationFn: createPost
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: createPost,
+    onSuccess: () => {
+      // Invalidate and refetch home posts after successful creation
+      queryClient.invalidateQueries({ queryKey: ["home-posts"] });
+    },
+    onError: (error) => {
+      console.error("Create post error:", error);
+    }
   });
 
   return (
@@ -106,10 +115,16 @@ const CreatePage = () => {
               <button
                 type="submit"
                 className="button-secondary px-8 py-4 text-xl hover:bg-gray-300  hover:text-red-500 cursor-pointer"
+                disabled={isPending}
               >
-                Create Post
+                {isPending ? "Creating..." : "Create Post"}
               </button>
             </div>
+            {error && (
+              <div className="mt-4 text-center">
+                <ErrorMessage message={error.message} />
+              </div>
+            )}
           </form>
         </div>
       </div>

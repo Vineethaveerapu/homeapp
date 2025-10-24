@@ -23,8 +23,9 @@ export const getSearchPosts = async (searchTerm: string) => {
   const supabase = createClient();
   return await supabase
     .from("posts")
-    .select(" title, slug")
-    .ilike("title", `%${searchTerm}%`);
+    .select("title, slug")
+    .ilike("title", `%${searchTerm}%`)
+    .limit(10); // Limit results to prevent large responses
 };
 
 export type HomePostType = QueryData<ReturnType<typeof getHomePosts>>;
