@@ -18,14 +18,16 @@ export const EditPost = async ({
   const {
     data: { user }
   } = await supabase.auth.getUser();
-  const { data: post, error } = await supabase
+  const { data: post, error: postError } = await supabase
     .from("posts")
     .select("*")
     .eq("id", postId)
     .single();
+
+  if (postError) throw new Error("Post not found");
   if (!user || user.id !== post?.user_id) throw new Error("Unauthorized");
 
-  const { data: updatedPost } = await supabase
+  const { data: updatedPost, error: updateError } = await supabase
     .from("posts")
     .update({
       title: parsedData.title,
@@ -34,9 +36,9 @@ export const EditPost = async ({
     })
     .eq("id", postId)
     .select("slug")
-    .throwOnError();
+    .single();
 
-  if (error) throw error;
+  if (updateError) throw new Error("Failed to update post");
   revalidatePath("/");
-  redirect(`/${updatedPost}`);
+  redirect(`/${updatedPost.slug}`);
 };
