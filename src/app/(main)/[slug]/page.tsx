@@ -54,6 +54,9 @@ const SinglePost = async ({ params }: { params: { slug: string } }) => {
             {/* <p>author : {data.user_id}</p>
             <p>logged in: {user?.id}</p> */}
           </div>
+          {data.image && (
+            <div className=" w-lg m-auto p-4 bg-gray-100 rounded-lg mt-4"></div>
+          )}
           <div className="m-auto p-4 bg-gray-100 rounded-lg mt-4">
             {data.content && <div>{data.content}</div>}
           </div>

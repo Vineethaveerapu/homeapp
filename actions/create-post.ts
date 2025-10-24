@@ -6,10 +6,18 @@ import z from "zod";
 import { createClient } from "@/utils/supabase/server-client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { uploadImage } from "@/utils/supabase/upload-image";
 
 export const createPost = async (userdata: z.infer<typeof postSchema>) => {
   const parsedData = postSchema.parse(userdata);
   const slug = slugify(parsedData.title);
+
+  const imageFile = userdata.image?.get("image") as File | undefined;
+  if (!(imageFile instanceof File) && imageFile !== null) {
+    throw new Error("Invalid image file");
+  }
+
+  const publicImageUrl = imageFile ? await uploadImage(imageFile) : null;
 
   const supabase = await createClient();
   const {
@@ -24,7 +32,9 @@ export const createPost = async (userdata: z.infer<typeof postSchema>) => {
 
   await supabase
     .from("posts")
-    .insert([{ user_id: userId, slug: slug, ...parsedData }])
+    .insert([
+      { user_id: userId, slug: slug, ...parsedData, image: publicImageUrl }
+    ])
     .throwOnError();
 
   revalidatePath("/");
