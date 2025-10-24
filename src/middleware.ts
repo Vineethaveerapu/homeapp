@@ -30,7 +30,7 @@ export const middleware = async (request: NextRequest) => {
     error
   } = await supabase.auth.getUser();
 
-  const ProtectedRoutes = [/^\/create$/];
+  const ProtectedRoutes = [/^\/create$/, /^\/[^\/]+\/edit$/];
 
   if (
     !user &&

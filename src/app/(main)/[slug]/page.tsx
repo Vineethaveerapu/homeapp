@@ -1,6 +1,6 @@
 import { getSinglePost } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server-client";
-import Link from "next/link";
+import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
 
 const SinglePost = async ({ params }: { params: { slug: string } }) => {
@@ -90,8 +90,9 @@ const SinglePost = async ({ params }: { params: { slug: string } }) => {
             {/* Author Actions */}
             {isAuthor && (
               <div className="p-8 border-t border-gray-300">
-                <div className="flex justify-center ">
+                <div className="flex space-around  ">
                   <DeleteButton postId={data.id} />
+                  <EditButton slug={data.slug} />
                 </div>
               </div>
             )}
