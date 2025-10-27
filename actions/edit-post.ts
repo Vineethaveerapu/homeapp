@@ -5,6 +5,7 @@ import { z } from "zod";
 import { slugify } from "@/utils/supabase/slugify";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { uploadImage } from "@/utils/supabase/upload-image";
 
 export const EditPost = async ({
   postId,
@@ -14,6 +15,14 @@ export const EditPost = async ({
   userData: z.infer<typeof postSchema>;
 }) => {
   const parsedData = postSchema.parse(userData);
+
+  const imageFile = userData.image?.get("image");
+  if (!(imageFile instanceof File) && imageFile !== null) {
+    return { error: "Invalid image file" };
+  }
+
+  const publicImageUrl = imageFile ? await uploadImage(imageFile) : null;
+
   const supabase = await createClient();
   const {
     data: { user }
@@ -32,7 +41,8 @@ export const EditPost = async ({
     .update({
       title: parsedData.title,
       content: parsedData.content,
-      slug: slugify(parsedData.title)
+      slug: slugify(parsedData.title),
+      image: publicImageUrl
     })
     .eq("id", postId)
     .select("slug")
