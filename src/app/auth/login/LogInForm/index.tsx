@@ -15,7 +15,7 @@ const LogInForm = () => {
     resolver: zodResolver(logInSchema)
   });
 
-  const { mutate, isPending, error } = useMutation({
+  const { mutate, isPending, data, error } = useMutation({
     mutationFn: logIn
   });
 
@@ -51,7 +51,7 @@ const LogInForm = () => {
           {isPending ? "Logging in..." : "Login"}
         </button>
       </form>
-      {error && <ErrorMessage message={error.message} />}
+      {data?.error && <ErrorMessage message={data.error} />}
     </>
   );
 };
