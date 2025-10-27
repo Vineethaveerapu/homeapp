@@ -9,47 +9,57 @@ import { redirect } from "next/navigation";
 import { uploadImage } from "@/utils/supabase/upload-image";
 
 export const createPost = async (userdata: z.infer<typeof postSchema>) => {
-  const parsedData = postSchema.parse(userdata);
-  const slug = slugify(parsedData.title);
+  try {
+    const parsedData = postSchema.parse(userdata);
+    let slug = slugify(parsedData.title);
 
-  const imageFile = userdata.image?.get("image") as File | undefined;
-  if (!(imageFile instanceof File) && imageFile !== null) {
-    throw new Error("Invalid image file");
+    const supabase = await createClient();
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { error: "Not Authorized" };
+    }
+
+    const userId = user.id;
+
+    // Check if a post with this slug already exists and make it unique if needed
+    const { data: existingPost } = await supabase
+      .from("posts")
+      .select("id")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (existingPost) {
+      // Make slug unique by appending timestamp
+      slug = `${slug}-${Date.now()}`;
+    }
+
+    const imageFile = userdata.image?.get("image") as File | undefined;
+    if (!(imageFile instanceof File) && imageFile !== null) {
+      return { error: "Invalid image file" };
+    }
+
+    const publicImageUrl = imageFile ? await uploadImage(imageFile) : null;
+
+    await supabase
+      .from("posts")
+      .insert([
+        { user_id: userId, slug: slug, ...parsedData, image: publicImageUrl }
+      ])
+      .throwOnError();
+
+    revalidatePath("/");
+    redirect(`/${slug}`);
+  } catch (error) {
+    // If it's a redirect error, re-throw it
+    if (error instanceof Error && error.message.includes("NEXT_REDIRECT")) {
+      throw error;
+    }
+    // Otherwise, return the error message
+    return {
+      error: error instanceof Error ? error.message : "An error occurred"
+    };
   }
-
-  const publicImageUrl = imageFile ? await uploadImage(imageFile) : null;
-
-  const supabase = await createClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("Not Authorized");
-  }
-
-  const userId = user.id;
-
-  // Check if a post with this title already exists
-  const { data: existingPost } = await supabase
-    .from("posts")
-    .select("id")
-    .eq("title", parsedData.title)
-    .single();
-
-  if (existingPost) {
-    throw new Error(
-      "A post with this title already exists. Please choose a different title."
-    );
-  }
-
-  await supabase
-    .from("posts")
-    .insert([
-      { user_id: userId, slug: slug, ...parsedData, image: publicImageUrl }
-    ])
-    .throwOnError();
-
-  revalidatePath("/");
-  redirect(`/${slug}`);
 };

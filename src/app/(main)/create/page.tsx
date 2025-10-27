@@ -28,7 +28,12 @@ const CreatePage = () => {
   });
 
   const { mutate, isPending, error } = useMutation({
-    mutationFn: createPost,
+    mutationFn: async (data: z.infer<typeof postSchema>) => {
+      const result = await createPost(data);
+      if (result && "error" in result) {
+        throw new Error(result.error);
+      }
+    },
     onSuccess: () => {
       // Invalidate and refetch home posts after successful creation
       queryClient.invalidateQueries({ queryKey: ["home-posts"] });
@@ -48,7 +53,8 @@ const CreatePage = () => {
           <form
             onSubmit={handleSubmit((values) => {
               const imageForm = new FormData();
-              if (values.image) imageForm.append("image", values.image[0]);
+              if (values.image?.length)
+                imageForm.append("image", values.image[0]);
               mutate({
                 title: values.title,
                 content: values.content,
