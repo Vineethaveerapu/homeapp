@@ -27,8 +27,8 @@ const EditForm = ({
     resolver: zodResolver(schemaWithImage),
     defaultValues: {
       title: initialValues.title,
-      content: initialValues.content ?? undefined,
-      image: initialValues.image ?? undefined
+      content: initialValues.content || undefined,
+      image: initialValues.image || undefined
     }
   });
 
@@ -45,9 +45,10 @@ const EditForm = ({
           </h2>
           <form
             onSubmit={handleSubmit((values) => {
-              const imageForm = new FormData();
+              let imageForm = undefined;
 
-              if (values.image?.length) {
+              if (values.image?.length && typeof values.image !== "string") {
+                imageForm = new FormData();
                 imageForm.append("image", values.image[0]);
               }
 

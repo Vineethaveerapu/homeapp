@@ -17,11 +17,16 @@ export const EditPost = async ({
   const parsedData = postSchema.parse(userData);
 
   const imageFile = userData.image?.get("image");
-  if (!(imageFile instanceof File) && imageFile !== null) {
-    return { error: "Invalid image file" };
-  }
 
-  const publicImageUrl = imageFile ? await uploadImage(imageFile) : null;
+  let publicImageUrl;
+  if (typeof imageFile !== "string" && imageFile !== undefined) {
+    if (!(imageFile instanceof File) && imageFile !== null) {
+      return { error: "Invalid image file" };
+    }
+    publicImageUrl = await uploadImage(imageFile!);
+  } else {
+    publicImageUrl = imageFile;
+  }
 
   const supabase = await createClient();
   const {
