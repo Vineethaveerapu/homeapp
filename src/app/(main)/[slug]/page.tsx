@@ -1,7 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 import { getSinglePost } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server-client";
 import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
+import Comments from "./Comments";
 
 const SinglePost = async ({ params }: { params: { slug: string } }) => {
   const { slug } = await params;
@@ -97,6 +99,14 @@ const SinglePost = async ({ params }: { params: { slug: string } }) => {
               </div>
             )}
           </article>
+
+          {/* Comments Section */}
+          <Comments
+            postId={data.id}
+            postAuthorId={data.user_id}
+            currentUserId={user?.id || null}
+            isAuthenticated={!!user}
+          />
         </>
       )}
     </div>

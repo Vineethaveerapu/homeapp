@@ -28,4 +28,14 @@ export const getSearchPosts = async (searchTerm: string) => {
     .limit(10); // Limit results to prevent large responses
 };
 
+export const getCommentsByPostId = async (postId: string) => {
+  const supabase = createClient();
+  return await supabase
+    .from("comments")
+    .select("id, content, created_at, user_id, users(username)")
+    .eq("post_id", postId)
+    .order("created_at", { ascending: false });
+};
+
 export type HomePostType = QueryData<ReturnType<typeof getHomePosts>>;
+export type CommentType = QueryData<ReturnType<typeof getCommentsByPostId>>[0];
