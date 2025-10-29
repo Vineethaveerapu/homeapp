@@ -91,7 +91,7 @@ const SinglePost = async ({ params }: { params: { slug: string } }) => {
             {/* Author Actions */}
             {isAuthor && (
               <div className="p-8 border-t border-gray-300">
-                <div className="flex space-between  ">
+                <div className="flex space-around  ">
                   <DeleteButton postId={data.id} />
                   <EditButton slug={data.slug} />
                 </div>
