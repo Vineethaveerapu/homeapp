@@ -6,7 +6,6 @@ import { createClient } from "@/utils/supabase/browser-client";
 import { useMemo } from "react";
 
 const HomePosts = ({ posts }: { posts: HomePostType }) => {
-  // Memoize the supabase client to prevent recreating on every render
   const supabase = useMemo(() => createClient(), []);
 
   const { data } = useQuery({
