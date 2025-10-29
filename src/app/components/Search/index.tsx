@@ -35,10 +35,10 @@ const SearchInput = () => {
 
   return (
     <div className="grid gap-2">
-      <div className="border-2 border-gray-700 rounded-2xl p-2 relative flex items-center gap-2">
-        <Search size={32} />
+      <div className="border-2 border-gray-700 rounded-2xl p-2 relative flex items-center gap-2 min-w-0">
+        <Search className="w-5 h-5 sm:w-8 sm:h-8 flex-shrink-0" />
         <input
-          className="block w-full bg-transparent outline-none "
+          className="block w-full bg-transparent outline-none text-sm sm:text-base"
           name="search"
           placeholder="Search"
           value={userInput}

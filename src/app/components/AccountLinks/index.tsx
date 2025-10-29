@@ -13,10 +13,10 @@ const AccountLinks = async () => {
   // console.log("Error:", error);
 
   return (
-    <div>
+    <div className="flex flex-wrap gap-2">
       {user ? (
         <>
-          <Link className="button-tertiary mr-6" href="/create">
+          <Link className="button-tertiary" href="/create">
             Create Post
           </Link>
           <LogOutButton />
