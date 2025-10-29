@@ -24,7 +24,21 @@ export const createPost = async (userdata: z.infer<typeof postSchema>) => {
 
     const userId = user.id;
 
-    // Check if a post with this slug already exists and make it unique if needed
+    // Check if a post with this title already exists
+    const { data: existingPostByTitle } = await supabase
+      .from("posts")
+      .select("id")
+      .eq("title", parsedData.title)
+      .maybeSingle();
+
+    if (existingPostByTitle) {
+      return {
+        error:
+          "A post with this title already exists. Please choose a different title."
+      };
+    }
+
+    // Check if a post with this slug already exists and  unique
     const { data: existingPost } = await supabase
       .from("posts")
       .select("id")
@@ -57,7 +71,7 @@ export const createPost = async (userdata: z.infer<typeof postSchema>) => {
     if (error instanceof Error && error.message.includes("NEXT_REDIRECT")) {
       throw error;
     }
-    // Otherwise, return the error message
+
     return {
       error: error instanceof Error ? error.message : "An error occurred"
     };

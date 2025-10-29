@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import { getSinglePost } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server-client";
 import EditButton from "./EditButton";
@@ -92,7 +91,7 @@ const SinglePost = async ({ params }: { params: { slug: string } }) => {
             {/* Author Actions */}
             {isAuthor && (
               <div className="p-8 border-t border-gray-300">
-                <div className="flex space-around  ">
+                <div className="flex space-between  ">
                   <DeleteButton postId={data.id} />
                   <EditButton slug={data.slug} />
                 </div>

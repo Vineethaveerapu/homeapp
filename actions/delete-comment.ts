@@ -19,7 +19,7 @@ const DeleteComment = async (commentId: number) => {
     // Get the comment to check ownership
     const { data: comment } = await supabase
       .from("comments")
-      .select("user_id, post_id, posts(user_id)")
+      .select("user_id, post_id")
       .eq("id", commentId)
       .single();
 
@@ -28,9 +28,19 @@ const DeleteComment = async (commentId: number) => {
       return { error: "Comment not found" };
     }
 
+    // Get the post to check if user is the post author
+    let isPostAuthor = false;
+    if (comment.post_id) {
+      const { data: post } = await supabase
+        .from("posts")
+        .select("user_id")
+        .eq("id", Number(comment.post_id))
+        .single();
+      isPostAuthor = post ? user.id === post.user_id : false;
+    }
+
     // Check if user is the comment author or the post author
     const isCommentAuthor = user.id === comment.user_id;
-    const isPostAuthor = user.id === (comment.posts as any)?.user_id;
 
     if (!isCommentAuthor && !isPostAuthor) {
       console.error(

@@ -28,12 +28,12 @@ export const getSearchPosts = async (searchTerm: string) => {
     .limit(10); // Limit results to prevent large responses
 };
 
-export const getCommentsByPostId = async (postId: string) => {
+export const getCommentsByPostId = async (postId: number) => {
   const supabase = createClient();
   return await supabase
     .from("comments")
     .select("id, content, created_at, user_id, users(username)")
-    .eq("post_id", postId)
+    .eq("post_id", String(postId))
     .order("created_at", { ascending: false });
 };
 
