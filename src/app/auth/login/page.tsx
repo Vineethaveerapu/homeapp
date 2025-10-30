@@ -4,10 +4,10 @@ import LogInForm from "./LogInForm";
 const LogInPage = () => {
   return (
     <>
-      <div className="border-1 rounded-2xl p-4 w-[700px] mx-auto">
-        <h2 className="text-3xl font-bold text-center">Login</h2>
+      <div className="w-full max-w-lg mx-auto rounded-2xl p-4 sm:p-6 md:p-8 border">
+        <h2 className="text-3xl font-bold text-center mb-4">Login</h2>
         <LogInForm />
-        <div>
+        <div className="mt-4 text-center">
           Don&apos;t have an account? Sign up{" "}
           <Link className="text-red-500" href="/auth/signup">
             here

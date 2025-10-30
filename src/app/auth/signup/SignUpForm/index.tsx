@@ -20,24 +20,27 @@ const SignUpForm = () => {
   });
 
   return (
-    <>
+    <div className="w-full max-w-md mx-auto px-4 sm:px-6">
       <form
         onSubmit={handleSubmit((values) => mutate(values))}
         className="flex flex-col gap-4 mb-4"
       >
-        <fieldset className="flex flex-col gap-4">
+        <fieldset className="flex flex-col gap-2">
           <label htmlFor="email"> Enter your Email</label>
           <input
-            className="border-2 border-gray-700 rounded-2xl p-2"
+            className="w-full border-2 border-gray-700 rounded-2xl p-2"
             id="email"
             {...register("email")}
             type="email"
             required
             placeholder="Enter your Email"
+            autoComplete="email"
+            inputMode="email"
+            aria-invalid={!!errors.email}
           />
           {errors.email && <ErrorMessage message={errors.email.message!} />}
         </fieldset>
-        <fieldset className="flex flex-col gap-4">
+        <fieldset className="flex flex-col gap-2">
           <label htmlFor="username"> Enter your Username</label>
           <input
             id="username"
@@ -45,32 +48,37 @@ const SignUpForm = () => {
             required
             {...register("username")}
             placeholder=" Enter your Username"
-            className="border-2 border-gray-700 rounded-2xl p-2"
+            className="w-full border-2 border-gray-700 rounded-2xl p-2"
+            autoComplete="username"
+            aria-invalid={!!errors.username}
           />
           {errors.username && (
             <ErrorMessage message={errors.username.message!} />
           )}
         </fieldset>
-        <fieldset className="flex flex-col gap-4">
+        <fieldset className="flex flex-col gap-2">
           <label htmlFor="password"> Enter your Password</label>
           <input
             id="password"
             {...register("password")}
             required
             placeholder=" Enter your Password"
-            className="border-2 border-gray-700 rounded-2xl p-2"
+            className="w-full border-2 border-gray-700 rounded-2xl p-2"
+            type="password"
+            autoComplete="new-password"
+            aria-invalid={!!errors.password}
           />
           {errors.password && (
             <ErrorMessage message={errors.password.message!} />
           )}
         </fieldset>
 
-        <button type="submit" className="button-secondary w-1/2 mx-auto">
+        <button type="submit" className="button-secondary w-auto mx-auto">
           Sign Up
         </button>
         {error && <ErrorMessage message={error.message} />}
       </form>
-    </>
+    </div>
   );
 };
 
