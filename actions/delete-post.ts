@@ -2,14 +2,17 @@
 
 import { createClient } from "@/utils/supabase/server-client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 const DeletePost = async (postId: number) => {
   const supabase = await createClient();
-  await supabase.from("posts").delete().eq("id", postId).throwOnError();
+  const { error } = await supabase.from("posts").delete().eq("id", postId);
+
+  if (error) {
+    throw new Error("Failed to delete post");
+  }
 
   revalidatePath("/");
-  redirect("/");
+  return { success: true };
 };
 
 export default DeletePost;
