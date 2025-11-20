@@ -11,7 +11,7 @@ import { uploadImage } from "@/utils/supabase/upload-image";
 export const createPost = async (userdata: z.infer<typeof postSchema>) => {
   try {
     const parsedData = postSchema.parse(userdata);
-    let slug = slugify(parsedData.title);
+    const slug = slugify(parsedData.title);
 
     const supabase = await createClient();
     const {
@@ -38,16 +38,18 @@ export const createPost = async (userdata: z.infer<typeof postSchema>) => {
       };
     }
 
-    // Check if a post with this slug already exists and  unique
-    const { data: existingPost } = await supabase
+    // Check if a post with this slug already exists
+    const { data: existingPostBySlug } = await supabase
       .from("posts")
       .select("id")
       .eq("slug", slug)
       .maybeSingle();
 
-    if (existingPost) {
-      // Make slug unique by appending timestamp
-      slug = `${slug}-${Date.now()}`;
+    if (existingPostBySlug) {
+      return {
+        error:
+          "A post with this slug already exists. Please choose a different title."
+      };
     }
 
     const imageFile = userdata.image?.get("image") as File | undefined;
