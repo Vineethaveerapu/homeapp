@@ -12,14 +12,16 @@ export const SignUp = async (userdata: z.infer<typeof signUpSchema>) => {
     error
   } = await supabase.auth.signUp(userdata);
 
-  if (error) throw error;
+  if (error) throw new Error("Error: User already exists");
 
   if (user && user.email) {
-    await supabase
+    const { error: userError } = await supabase
       .from("users")
       .insert([
         { id: user.id, email: user.email, username: userdata.username }
       ]);
+
+    if (userError) throw new Error("Error: Failed to create user in database");
   }
 
   redirect("/");
