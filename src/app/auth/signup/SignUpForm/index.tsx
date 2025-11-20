@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { signUpSchema } from "../../../../../actions/schemas";
 import { useMutation } from "@tanstack/react-query";
 import ErrorMessage from "@/app/components/ErrorMessage";
+import { z } from "zod";
 
 const SignUpForm = () => {
   const {
@@ -16,7 +17,11 @@ const SignUpForm = () => {
   });
 
   const { mutate, error } = useMutation({
-    mutationFn: SignUp
+    mutationFn: async (signupValues: z.infer<typeof signUpSchema>) => {
+      const result = await SignUp(signupValues);
+      if (result?.error) throw new Error(result.error);
+      return result;
+    }
   });
 
   return (
