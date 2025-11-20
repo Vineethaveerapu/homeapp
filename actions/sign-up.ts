@@ -12,6 +12,8 @@ export const SignUp = async (userdata: z.infer<typeof signUpSchema>) => {
     error
   } = await supabase.auth.signUp(userdata);
 
+  if (error) throw error;
+
   if (user && user.email) {
     await supabase
       .from("users")
@@ -20,6 +22,5 @@ export const SignUp = async (userdata: z.infer<typeof signUpSchema>) => {
       ]);
   }
 
-  if (error) throw error;
   redirect("/");
 };
